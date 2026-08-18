@@ -1,0 +1,24 @@
+Vídeo de fundo do hero — já otimizado e no lugar
+
+  hero-bg.mp4   3,7 MB  (H.264, 1280x720, 30fps, sem áudio)
+  hero-bg.webm  5,0 MB  (VP9,   1280x720, 30fps, sem áudio)
+
+O que foi feito a partir do arquivo original que você mandou (1280x720,
+50fps, ~3,8 Mbps, 14,5 MB):
+  - FPS reduzido de 50 para 30 — 50fps num vídeo de fundo só faz o
+    navegador trabalhar em dobro à toa, sem diferença visual perceptível
+    num elemento decorativo atrás de overlay escuro.
+  - Recomprimido com CRF 27 (x264, preset slow) — mantém a nitidez em
+    1280x720, cortando bastante gordura do bitrate.
+  - Sem áudio (o <video> no site já carrega com muted de qualquer forma).
+  - +faststart no MP4 — o navegador consegue começar a tocar antes de
+    baixar o arquivo inteiro, em vez de travar esperando.
+
+O componente components/Hero.tsx já está apontando pros dois arquivos
+(tenta o .webm primeiro, cai pro .mp4 se o navegador não suportar). Se um
+dia você trocar o vídeo, é só substituir esses dois arquivos mantendo os
+mesmos nomes — não precisa mexer em nada no código.
+
+Se quiser recomprimir de novo no futuro (com ffmpeg instalado):
+  ffmpeg -i original.mp4 -vf "fps=30,scale=1280:-2" -c:v libx264 \
+    -preset slow -crf 27 -pix_fmt yuv420p -an -movflags +faststart hero-bg.mp4

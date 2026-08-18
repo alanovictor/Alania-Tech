@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #05070c;
+  color: #eef2f6;
+}
+
+::selection {
+  background: #1c8dff;
+  color: #05070c;
+}
+
+/* subtle triangular pattern used as ambient texture on light band */
+.tri-pattern {
+  background-image: repeating-linear-gradient(
+      60deg,
+      rgba(28, 141, 255, 0.08) 0px,
+      rgba(28, 141, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 42px
+    ),
+    repeating-linear-gradient(
+      -60deg,
+      rgba(28, 141, 255, 0.08) 0px,
+      rgba(28, 141, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 42px
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

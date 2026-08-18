@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: Deploy Alania Tech to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
-  # Permite rodar manualmente pela aba "Actions" no GitHub, sem precisar de um novo commit.
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,52 +11,45 @@ permissions:
   pages: write
   id-token: write
 
-# Evita duas publicações rodando ao mesmo tempo.
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Instalar Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22
 
-      - name: Definir o basePath (subpasta do GitHub Pages)
-        id: basepath
-        run: |
-          REPO_NAME="${{ github.event.repository.name }}"
-          # Repositórios do tipo "usuario.github.io" publicam na raiz do domínio,
-          # então não usam basePath. Qualquer outro repositório é publicado em
-          # https://usuario.github.io/nome-do-repositorio/, então precisa do prefixo.
-          if [[ "$REPO_NAME" == *.github.io ]]; then
-            echo "BASE_PATH=" >> "$GITHUB_ENV"
-          else
-            echo "BASE_PATH=/$REPO_NAME" >> "$GITHUB_ENV"
-          fi
+      - name: Install dependencies
+        run: npm install
 
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Build (exportação estática)
+      - name: Build Next.js
         run: npm run build
         env:
-          NEXT_PUBLIC_BASE_PATH: ${{ env.BASE_PATH }}
+          NEXT_PUBLIC_BASE_PATH: /Alania-Tech
 
-      - name: Garantir o arquivo .nojekyll na saída
+      - name: Check generated site
+        run: |
+          echo "Conteúdo da pasta out:"
+          ls -la ./out
+          echo "Arquivos principais:"
+          find ./out -maxdepth 2 -type f | head -50
+
+      - name: Create .nojekyll
         run: touch ./out/.nojekyll
 
-      - name: Preparar o Pages
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Enviar artefato de build
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
@@ -64,10 +57,12 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - name: Publicar no GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

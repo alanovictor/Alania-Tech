@@ -34,8 +34,8 @@ This project was developed with the following technologies:<br>
 É uma página web, criado para a empresa Alania Tech Advisory.<br>
 It is a webpage created for the company Alania Tech Advisory.
 
-- [Access the finished project online](#)<br>
-- [Acesse o projeto finalizado online](#)
+- [Access the finished project online](https://alanovictor.github.io/Alania-Tech/)<br>
+- [Acesse o projeto finalizado online](https://alanovictor.github.io/Alania-Tech/)
 
 
 ## :memo: License-Licença
